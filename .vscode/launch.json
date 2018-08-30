@@ -1,0 +1,42 @@
+{
+    // To learn more about VSCode debugging, see: https://code.visualstudio.com/docs/editor/debugging 
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Start server",
+            "program": "${workspaceFolder}/start.js"
+        },
+        // Mocha debugging config from:
+        // https://github.com/Microsoft/vscode-recipes/tree/master/debugging-mocha-tests
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Mocha: All tests",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/test"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Mocha: Current File",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "--timeout",
+                "999999",
+                "--colors",
+                "${file}"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}

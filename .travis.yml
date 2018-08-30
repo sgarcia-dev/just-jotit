@@ -1,0 +1,9 @@
+language: node_js
+node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: X5X0J8xFBiiE1CUrqaFN0xaWf47ZtiUB6rTMZIbhukgV35FqtD7Dv9BJJ+rPIMFi/qB6c5sWK6Ig10LPhutEvH1LYujY6NQxnUYE8RmoCIVVazZ08LHzcoXRkcsw9erR2seWe913aG8jmT3fl25/qRr3dDSRbtUe3FbPeb36Y4Gt2EIllx8H2hBYawD+RcCl8ty9OusnYc//j28I/qY86eE+vpYK44Zg3P5iph5t2VelCWjcQdUf/lCVh1bLX3aP51RVXnXjh/EprLI1zqDrqyqBwZ+/TpxII/1ywmt+vYuy0nz2zNZVmbtGnie5hy+O0gyLJzFth9KtxDZkkY8wEyQAMr3I8uESb17yaUOdKdtQ+2rikfQJN6tQVRRkyVkCYCGmSNLSTsduC3Y4ao2PzPY/ygceA8byEHwp/zQqzxJ/UGoR4o8zuhazlRL+OI6qAMzYGyLjNFCitgiUhM8wa+VQfBp082x9bstVWI+tU7iKOE8fTFdtIXevulFmipEDqouN2/1fTfsOZ8EPC7B7os+0Ev98EHbCwu7mPyCDleifgXKNlP7+J5oOwAzLj2roHisYzN6xLV7xjvceF0xWVKb+VVAkCieiYAYY8evc5dJCH7UlZFzQkqyE/wDE3UIzhr+wiplsJ5OPRb5P4+hyr1XSnTDC/SPt/sspnzEO6dw=
+  app: just-jotit
+  on:
+    repo: sgarcia-dev/just-jotit
