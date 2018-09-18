@@ -3,26 +3,26 @@ const chai = require('chai');
 // http://www.chaijs.com/plugins/chai-http/
 const chaiHttp = require('chai-http');
 
-const { HTTP_STATUS_CODES } = require('../app/config'); 
+const { HTTP_STATUS_CODES } = require('../app/config');
 const { startServer, stopServer, app } = require('../app/server.js');
 
 const expect = chai.expect; // So we can do "expect" instead of always typing "chai.expect"
 chai.use(chaiHttp); // implements chai http plugin
 
-describe('Integration tests for: /', function() {
+describe('Integration tests for: /', function () {
     /**
      * To understand Mocha hooks (before, after, beforeEach, afterEach), see:
      * https://mochajs.org/#hooks
      */
-    before(function() {
+    before(function () {
         return startServer();
     });
 
-    after(function() {
+    after(function () {
         return stopServer();
     });
 
-    it('Should return index.html', function() {
+    it('Should return index.html', function () {
         chai.request(app)
             .get('/')
             .then(res => {

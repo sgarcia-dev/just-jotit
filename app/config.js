@@ -14,5 +14,7 @@ module.exports = {
         UNAUTHORIZED: 401,
         NOT_FOUND: 404,
         INTERNAL_SERVER_ERROR: 500,
-    }
+    },
+    MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017/just-jotit',
+    TEST_MONGO_URL: process.env.TEST_MONGO_URL || 'mongodb://localhost:27017/test-just-jotit'
 };

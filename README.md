@@ -1,4 +1,4 @@
-# Just Jotit
+# Just Jotit (W.I.P.)
 
 An *interactive tutorial* on how to build a Fullstack application using the Mongo + Express + Node + jQuery stack. The final result is a note keeping app with cloud sync. You can find a live version of it [here](https://just-jotit.heroku.com).
 
