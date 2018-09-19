@@ -4,7 +4,9 @@ An *interactive tutorial* on how to build a Fullstack application using the Mong
 
 ## Progress Checklist
 
-This app is currently about 93% complete. It has a 100% back end with happy-path unit test coverage for all routes. It has a basic Frontend as well, but it's about 80% complete. Login, Signup, Homepage, Note details and Note creation are all functional. All that's left to do is Note Editing + Deletion and it will be 100% complete. There is no ETA aprox. for when this will be finished out of personal time constraints.
+This app is currently about 90% complete. It has a 100% back end with happy-path unit test coverage for all routes. It has a basic Frontend as well, but it's about 85% complete. Login, Signup, Logout, Homepage, Note details and Note creation are all functional. All that's left to do is Note Editing + Deletion and it will be 100% complete. There is no ETA aprox. for when this will be finished out of personal time constraints.
+
+Comments to explain the application flow are added plentifully everywhere possible, but notable areas where they are lacking at the moment are in some unit tests, and the front-end. I will add these when I have the time.
 
 ## How to Use
 
