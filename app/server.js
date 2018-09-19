@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 // http://www.passportjs.org/docs/
 const passport = require('passport');
 
-const { PORT, HTTP_STATUS_CODES, MONGO_URL } = require('./config');
+const { PORT, HTTP_STATUS_CODES, MONGO_URL, TEST_MONGO_URL } = require('./config');
 const { authRouter } = require('./auth/auth.router');
 const { userRouter } = require('./user/user.router');
 const { noteRouter } = require('./note/note.router');
@@ -42,13 +42,20 @@ module.exports = {
     stopServer
 };
 
-function startServer() {
+function startServer(testEnv) {
     // Remember, because the process of starting/stopping a server takes time, it's preferrable to make
     // this asynchronous, and return a promise that'll reject/resolve depending if the process is succesful.
 
     return new Promise((resolve, reject) => {
+        let mongoUrl;
+
+        if (testEnv) {
+            mongoUrl = TEST_MONGO_URL;
+        } else {
+            mongoUrl = MONGO_URL;
+        }
         // Step 1: Attempt to connect to MongoDB with mongoose
-        mongoose.connect(MONGO_URL, { useNewUrlParser: true }, err => {
+        mongoose.connect(mongoUrl, { useNewUrlParser: true }, err => {
             if (err) {
                 // Step 2A: If there is an error starting mongo, log error, reject promise and stop code execution.
                 console.error(err);

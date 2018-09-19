@@ -11,6 +11,7 @@ const { Note, NoteJoiSchema } = require('./note.model.js');
 noteRouter.post('/', jwtPassportMiddleware, (request, response) => {
     // Remember, We can access the request body payload thanks to the express.json() middleware we used in server.js
     const newNote = {
+        user: request.user.id,
         title: request.body.title,
         content: request.body.content,
         createDate: Date.now()
@@ -37,11 +38,12 @@ noteRouter.post('/', jwtPassportMiddleware, (request, response) => {
         });
 });
 
-// RETRIEVE NOTES
+// RETRIEVE USER's NOTES
 noteRouter.get('/', jwtPassportMiddleware, (request, response) => {
     // Step 1: Attempt to retrieve all notes using Mongoose.Model.find()
     // https://mongoosejs.com/docs/api.html#model_Model.find
-    Note.find()
+    Note.find({ user: request.user.id })
+        .populate('user')
         .then(notes => {
             // Step 2A: Return the correct HTTP status code, and the notes correctly formatted via serialization.
             return response.status(HTTP_STATUS_CODES.OK).json(
@@ -53,6 +55,25 @@ noteRouter.get('/', jwtPassportMiddleware, (request, response) => {
             return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
+
+// RETRIEVE ALL NOTES
+noteRouter.get('/all', jwtPassportMiddleware, (request, response) => {
+    // Step 1: Attempt to retrieve all notes using Mongoose.Model.find()
+    // https://mongoosejs.com/docs/api.html#model_Model.find
+    Note.find()
+        .populate('user')
+        .then(notes => {
+            // Step 2A: Return the correct HTTP status code, and the notes correctly formatted via serialization.
+            return response.status(HTTP_STATUS_CODES.OK).json(
+                notes.map(note => note.serialize())
+            );
+        })
+        .catch(error => {
+            // Step 2B: If an error ocurred, return an error HTTP status code and the error in JSON format.
+            return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
+        });
+});
+
 
 // RETRIEVE ONE NOTE BY ID
 noteRouter.get('/:noteid', jwtPassportMiddleware, (request, response) => {

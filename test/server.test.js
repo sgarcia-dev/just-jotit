@@ -10,15 +10,20 @@ const expect = chai.expect; // So we can do "expect" instead of always typing "c
 chai.use(chaiHttp); // implements chai http plugin
 
 describe('Integration tests for: /', function () {
-    /**
-     * To understand Mocha hooks (before, after, beforeEach, afterEach), see:
-     * https://mochajs.org/#hooks
-     */
+    // Mocha Hook: Runs before ALL the "it" test blocks.
     before(function () {
-        return startServer();
-    });
+        // Be sure to always return a promise to Mocha when doing asynchronous work,
+        // Otherwise Mocha will just asume your work is done even if it isn't.
 
+        // Starts our Express Server, so we can test it.
+        return startServer(true);
+    });
+    // Mocha Hook: Runs after ALL the "it" test blocks.
     after(function () {
+        // Be sure to always return a promise to Mocha when doing asynchronous work,
+        // Otherwise Mocha will just asume your work is done even if it isn't.
+
+        // Shuts down our Express Server, since we don't need it anymore.
         return stopServer();
     });
 
