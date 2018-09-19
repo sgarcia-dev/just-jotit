@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Signup | JJ</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+    <link rel="stylesheet" href="./just-jotit.css">
+</head>
+<body>
+    <h1>Sign up</h1>
+    <form id="sign-up-form">
+        <label for="name-txt">
+            Name: <input id="name-txt" type="text" required><br>
+        </label>
+        <label for="email-txt">
+            Email: <input id="email-txt" type="email" required><br>
+        </label>
+        <label for="username-txt">
+            Username: <input id="username-txt" type="text" required><br>
+        </label>
+        <label for="password-txt">
+            Password: <input id="password-txt" type="password" required><br>
+        </label>
+        <input type="submit" value="Create Account">
+    </form>
+    <br>
+    <nav>
+        <a href="/index.html">Back to Home</a>
+        <br><br>
+        <a href="/login.html">Already have an account? Click here.</a>
+    </nav>
+
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="./utils.js"></script>
+    <script src="./auth.js"></script>
+</body>
+</html>

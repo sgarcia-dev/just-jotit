@@ -17,13 +17,15 @@ function createJwtToken(user) {
 }
 
 authRouter.post('/login', localPassportMiddleware, (request, response) => {
-    const jwtToken = createJwtToken(request.user.serialize());
-    response.json({ jwtToken });
+    const user = request.user.serialize();
+    const jwtToken = createJwtToken(user);
+    response.json({ jwtToken, user });
 });
 
 authRouter.post('/refresh', jwtPassportMiddleware, (request, response) => {
-    const jwtToken = createJwtToken(request.user);
-    response.json({ jwtToken });
+    const user = request.user;
+    const jwtToken = createJwtToken(user);
+    response.json({ jwtToken, user });
 });
 
 module.exports = { authRouter };

@@ -57,7 +57,7 @@ noteRouter.get('/', jwtPassportMiddleware, (request, response) => {
 });
 
 // RETRIEVE ALL NOTES
-noteRouter.get('/all', jwtPassportMiddleware, (request, response) => {
+noteRouter.get('/all', (request, response) => {
     // Step 1: Attempt to retrieve all notes using Mongoose.Model.find()
     // https://mongoosejs.com/docs/api.html#model_Model.find
     Note.find()
@@ -76,10 +76,11 @@ noteRouter.get('/all', jwtPassportMiddleware, (request, response) => {
 
 
 // RETRIEVE ONE NOTE BY ID
-noteRouter.get('/:noteid', jwtPassportMiddleware, (request, response) => {
+noteRouter.get('/:noteid', (request, response) => {
     // Step 1: Attempt to retrieve the note using Mongoose.Model.findById()
     // https://mongoosejs.com/docs/api.html#model_Model.findById
     Note.findById(request.params.noteid)
+        .populate('user')
         .then(note => {
             // Step 2A: Return the correct HTTP status code, and the note correctly formatted via serialization.
             return response.status(HTTP_STATUS_CODES.OK).json(note.serialize());

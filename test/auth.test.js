@@ -6,7 +6,7 @@ const chaiHttp = require('chai-http');
 const jsonwebtoken = require('jsonwebtoken');
 const faker = require('faker');
 
-const { HTTP_STATUS_CODES, JWT_SECRET } = require('../app/config');
+const { HTTP_STATUS_CODES, JWT_SECRET, JWT_EXPIRY } = require('../app/config');
 const { startServer, stopServer, app } = require('../app/server.js');
 const { User } = require('../app/user/user.model');
 
@@ -14,7 +14,7 @@ const expect = chai.expect; // So we can do "expect" instead of always typing "c
 chai.use(chaiHttp); // implements chai http plugin
 
 describe('Integration tests for: /api/auth', function () {
-    let testUser;
+    let testUser, jwtToken;
 
     // Mocha Hook: Runs before ALL the "it" test blocks.
     before(function () {
@@ -37,7 +37,26 @@ describe('Integration tests for: /api/auth', function () {
                 username: testUser.username,
                 password: hashedPassword
             })
-                .then(() => { })
+                .then(createdUser => {
+                    testUser.id = createdUser.id;
+
+                    jwtToken = jsonwebtoken.sign(
+                        {
+                            user: {
+                                id: testUser.id,
+                                name: testUser.name,
+                                email: testUser.email,
+                                username: testUser.username
+                            }
+                        },
+                        JWT_SECRET,
+                        {
+                            algorithm: 'HS256',
+                            expiresIn: JWT_EXPIRY,
+                            subject: testUser.username
+                        }
+                    );
+                })
                 .catch(err => {
                     console.error(err);
                 });
@@ -96,28 +115,12 @@ describe('Integration tests for: /api/auth', function () {
     });
 
     it('Should refresh the user JSON Web Token', function () {
-        let firstJwtPayload;
-
+        const firstJwtPayload = jsonwebtoken.verify(jwtToken, JWT_SECRET, {
+            algorithm: ['HS256']
+        });
         return chai.request(app)
-            .post('/api/auth/login')
-            .send({
-                username: testUser.username,
-                password: testUser.password
-            })
-            .then(res => {
-                expect(res).to.have.status(HTTP_STATUS_CODES.OK);
-                expect(res).to.be.json;
-                expect(res.body).to.be.a('object');
-                expect(res.body).to.include.keys('jwtToken');
-
-                firstJwtPayload = jsonwebtoken.verify(res.body.jwtToken, JWT_SECRET, {
-                    algorithm: ['HS256']
-                });
-
-                return chai.request(app)
-                    .post('/api/auth/refresh')
-                    .set('Authorization', `Bearer ${res.body.jwtToken}`);
-            })
+            .post('/api/auth/refresh')
+            .set('Authorization', `Bearer ${jwtToken}`)
             .then(res => {
                 expect(res).to.have.status(HTTP_STATUS_CODES.OK);
                 expect(res).to.be.json;
