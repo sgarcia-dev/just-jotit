@@ -21,21 +21,24 @@ userRouter.post('/', (request, response) => {
     // https://www.npmjs.com/package/joi
     const validation = Joi.validate(newUser, UserJoiSchema);
     if (validation.error) {
-        // If validation errors are found, return server error and the error message
+        // Step 2A: If validation error is found, end the the request with a server error and error message.
         return response.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
     }
-    // Step 2: Verify if the new user's email or username doesn't already exist in the database. 
+    // Step 2B: Verify if the new user's email or username doesn't already exist in the database using Mongoose.Model.findOne() 
+    // https://mongoosejs.com/docs/api.html#model_Model.findOne
     User.findOne({
-        $or: [ // Mongoose $or operator: https://docs.mongodb.com/manual/reference/operator/query/or/ 
+        // Mongoose $or operator: https://docs.mongodb.com/manual/reference/operator/query/or/ 
+        $or: [
             { email: newUser.email },
             { username: newUser.username }
         ]
     }).then(user => {
         if (user) {
             // Step 3A: If user already exists, respond with an error.
-            return response.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: 'A user with that username and/or email already exists.' });
+            return response.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: 'Database Error: A user with that username and/or email already exists.' });
         } else {
-            // Step 3B: If the user doesn't exist, create the new user.
+            // Step 3B: If the user doesn't exist, create the new user using Mongoose.Model.create()
+            // https://mongoosejs.com/docs/api.html#model_Model.create
             User.create(newUser)
                 .then(createdUser => {
                     // Step 4A: If created successfully, return the newly created user information 
@@ -51,25 +54,31 @@ userRouter.post('/', (request, response) => {
 
 // RETRIEVE USERS
 userRouter.get('/', (request, response) => {
+    // Step 1: Attempt to retrieve all users from the database using Mongoose.Model.find()
+    // https://mongoosejs.com/docs/api.html#model_Model.find
     User.find()
         .then(users => {
+            // Step 2A: Return the correct HTTP status code, and the users correctly formatted via serialization.
             return response.status(HTTP_STATUS_CODES.OK).json(
                 users.map(user => user.serialize())
             );
         })
         .catch(error => {
+            // Step 2B: If an error ocurred, return an error HTTP status code and the error in JSON format.
             return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
-// RETRIEVE USERS
+// RETRIEVE ONE USER
 userRouter.get('/:userid', (request, response) => {
-    User.find({ _id: request.params.userid })
-        .then(users => {
-            return response.status(HTTP_STATUS_CODES.OK).json(
-                users.map(user => user.serialize())
-            );
+    // Step 1: Attempt to retrieve a specific user using Mongoose.Model.findById()
+    // https://mongoosejs.com/docs/api.html#model_Model.findById
+    User.findById(request.params.userid)
+        .then(user => {
+            // Step 2A: Return the correct HTTP status code, and the user correctly formatted via serialization.
+            return response.status(HTTP_STATUS_CODES.OK).json(user.serialize());
         })
         .catch(error => {
+            // Step 2B: If an error ocurred, return an error HTTP status code and the error in JSON format.
             return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });

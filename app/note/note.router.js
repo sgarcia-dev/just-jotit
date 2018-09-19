@@ -15,44 +15,55 @@ noteRouter.post('/', (request, response) => {
         createDate: Date.now()
     };
 
+    // Step 1: Validate new user information is correct.
+    // Here, we use the Joi NPM library for easy validation
+    // https://www.npmjs.com/package/joi
     const validation = Joi.validate(newNote, NoteJoiSchema);
     if (validation.error) {
-        // If validation errors are found, return server error and the error message
+        // Step 2A: If validation error is found, end the the request with a server error and error message.
         return response.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
     }
-
+    // Step 2B: Attempt to create a new note using Mongoose.Model.create
     // https://mongoosejs.com/docs/api.html#model_Model.create
     Note.create(newNote)
         .then(createdUser => {
+            // Step 3A: Return the correct HTTP status code, and the note correctly formatted via serialization.
             return response.status(HTTP_STATUS_CODES.CREATED).json(createdUser.serialize());
         })
         .catch(error => {
+            // Step 3B: If an error ocurred, return an error HTTP status code and the error in JSON format.
             return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
 
 // RETRIEVE NOTES
 noteRouter.get('/', (request, response) => {
+    // Step 1: Attempt to retrieve all notes using Mongoose.Model.find()
     // https://mongoosejs.com/docs/api.html#model_Model.find
     Note.find()
         .then(notes => {
+            // Step 2A: Return the correct HTTP status code, and the notes correctly formatted via serialization.
             return response.status(HTTP_STATUS_CODES.OK).json(
                 notes.map(note => note.serialize())
             );
         })
         .catch(error => {
+            // Step 2B: If an error ocurred, return an error HTTP status code and the error in JSON format.
             return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
 
 // RETRIEVE ONE NOTE BY ID
 noteRouter.get('/:noteid', (request, response) => {
+    // Step 1: Attempt to retrieve the note using Mongoose.Model.findById()
     // https://mongoosejs.com/docs/api.html#model_Model.findById
     Note.findById(request.params.noteid)
         .then(note => {
+            // Step 2A: Return the correct HTTP status code, and the note correctly formatted via serialization.
             return response.status(HTTP_STATUS_CODES.OK).json(note.serialize());
         })
         .catch(error => {
+            // Step 2B: If an error ocurred, return an error HTTP status code and the error in JSON format.
             return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
@@ -63,31 +74,40 @@ noteRouter.put('/:noteid', (request, response) => {
         title: request.body.title,
         content: request.body.content
     };
-
+    // Step 1: Validate new user information is correct.
+    // Here, we use the Joi NPM library for easy validation
+    // https://www.npmjs.com/package/joi
     const validation = Joi.validate(noteUpdate, NoteJoiSchema);
     if (validation.error) {
-        // If validation errors are found, return server error and the error message
+        // Step 2A: If validation error is found, end the the request with a server error and error message.
         return response.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
     }
-
+    // Step 2B: Attempt to find the note, and update it using Mongoose.Model.findByIdAndUpdate()
     // https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
     Note.findByIdAndUpdate(request.params.noteid, noteUpdate)
         .then(() => {
+            // Step 3A: Since the update was performed but no further data provided,
+            // we just end the request with NO_CONTENT status code.
             return response.status(HTTP_STATUS_CODES.NO_CONTENT).end();
         })
         .catch(error => {
+            // Step 3B: If an error ocurred, return an error HTTP status code and the error in JSON format.
             return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
 
 // REMOVE NOTE BY ID
 noteRouter.delete('/:noteid', (request, response) => {
+    // Step 1: Attempt to find the note by ID and delete it using Mongoose.Model.findByIdAndDelete()
     // https://mongoosejs.com/docs/api.html#model_Model.findByIdAndDelete
     Note.findByIdAndDelete(request.params.noteid)
         .then(() => {
+            // Step 2A: Since the deletion was performed but no further data provided,
+            // we just end the request with NO_CONTENT status code.
             return response.status(HTTP_STATUS_CODES.NO_CONTENT).end();
         })
         .catch(error => {
+            // Step 2B: If an error ocurred, return an error HTTP status code and the error in JSON format.
             return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
