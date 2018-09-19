@@ -1,10 +1,12 @@
 const express = require('express');
+// To learn more about the Joi NPM module, see official docs
 // https://www.npmjs.com/package/joi
 const Joi = require('joi');
-const userRouter = express.Router();
 
-const { User, UserJoiSchema } = require('./user.model.js');
 const { HTTP_STATUS_CODES } = require('../config.js');
+const { User, UserJoiSchema } = require('./user.model.js');
+
+const userRouter = express.Router();
 
 // CREATE NEW USER
 userRouter.post('/', (request, response) => {
@@ -34,21 +36,24 @@ userRouter.post('/', (request, response) => {
         ]
     }).then(user => {
         if (user) {
-            // Step 3A: If user already exists, respond with an error.
+            // Step 3A: If user already exists, abruptly end the request with an error.
             return response.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: 'Database Error: A user with that username and/or email already exists.' });
-        } else {
-            // Step 3B: If the user doesn't exist, create the new user using Mongoose.Model.create()
-            // https://mongoosejs.com/docs/api.html#model_Model.create
-            User.create(newUser)
-                .then(createdUser => {
-                    // Step 4A: If created successfully, return the newly created user information 
-                    return response.status(HTTP_STATUS_CODES.CREATED).json(createdUser.serialize());
-                })
-                .catch(error => {
-                    // Step 4B: if an error ocurred, respond with an error
-                    return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
-                });
         }
+        // Step 3B: We should NEVER store raw passwords, so instead we wait while we encrypt it into a hash. 
+        return User.hashPassword(newUser.password);
+    }).then(passwordHash => {
+        newUser.password = passwordHash;
+        // Step 4: Once password hash has replaced the raw password, we attempt to create the new user using Mongoose.Model.create()
+        // https://mongoosejs.com/docs/api.html#model_Model.create
+        User.create(newUser)
+            .then(createdUser => {
+                // Step 5A: If created successfully, return the newly created user information 
+                return response.status(HTTP_STATUS_CODES.CREATED).json(createdUser.serialize());
+            })
+            .catch(error => {
+                // Step 5B: if an error ocurred, respond with an error
+                return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
+            });
     });
 });
 

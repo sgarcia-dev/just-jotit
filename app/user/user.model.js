@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
+// To learn more about the Joi NPM module, see official docs
 // https://www.npmjs.com/package/joi
 const Joi = require('joi');
+// To learn more about the bcrypt NPM module, see official docs
+// https://www.npmjs.com/package/bcryptjs
+const bcrypt = require('bcryptjs');
 
 // Each Mongoose schema maps to a MongoDB collection and defines the shape of the documents within that collection.
 const userSchema = new mongoose.Schema({
@@ -10,7 +14,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true }
 });
 
-// Here we define a Mongoose instance method, to learn more about them, see:
+// Here we define a Mongoose instance methods, to learn more about them, see:
 // https://mongoosejs.com/docs/guide.html#methods
 userSchema.methods.serialize = function () {
     return {
@@ -19,6 +23,19 @@ userSchema.methods.serialize = function () {
         email: this.email,
         username: this.username,
     };
+};
+
+// You should NEVER store a password directly out of security concerns.
+// Instead, you should always "hash" it before storage. To learn more about hashing, see:
+// https://security.blogoverflow.com/2013/09/about-secure-password-hashing/
+userSchema.statics.hashPassword = function (password) {
+    return bcrypt.hash(password, 10);
+};
+
+// Since we don't ever store the user's raw password and instead store the hash,
+// we can validate it by running it into the same hashing algorithm and comparing the results.
+userSchema.methods.validatePassword = function (password) {
+    return bcrypt.compare(password, this.password);
 };
 
 // To validate that data used to create a new user is valid, we will use "Joi", a NPM library that

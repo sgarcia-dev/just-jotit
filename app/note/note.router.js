@@ -3,11 +3,12 @@ const express = require('express');
 const Joi = require('joi');
 const noteRouter = express.Router();
 
-const { Note, NoteJoiSchema } = require('./note.model.js');
 const { HTTP_STATUS_CODES } = require('../config.js');
+const { jwtPassportMiddleware } = require('../auth/auth.strategy');
+const { Note, NoteJoiSchema } = require('./note.model.js');
 
 // CREATE NEW NOTE
-noteRouter.post('/', (request, response) => {
+noteRouter.post('/', jwtPassportMiddleware, (request, response) => {
     // Remember, We can access the request body payload thanks to the express.json() middleware we used in server.js
     const newNote = {
         title: request.body.title,
@@ -37,7 +38,7 @@ noteRouter.post('/', (request, response) => {
 });
 
 // RETRIEVE NOTES
-noteRouter.get('/', (request, response) => {
+noteRouter.get('/', jwtPassportMiddleware, (request, response) => {
     // Step 1: Attempt to retrieve all notes using Mongoose.Model.find()
     // https://mongoosejs.com/docs/api.html#model_Model.find
     Note.find()
@@ -54,7 +55,7 @@ noteRouter.get('/', (request, response) => {
 });
 
 // RETRIEVE ONE NOTE BY ID
-noteRouter.get('/:noteid', (request, response) => {
+noteRouter.get('/:noteid', jwtPassportMiddleware, (request, response) => {
     // Step 1: Attempt to retrieve the note using Mongoose.Model.findById()
     // https://mongoosejs.com/docs/api.html#model_Model.findById
     Note.findById(request.params.noteid)
@@ -69,7 +70,7 @@ noteRouter.get('/:noteid', (request, response) => {
 });
 
 // REMOVE NOTE BY ID
-noteRouter.put('/:noteid', (request, response) => {
+noteRouter.put('/:noteid', jwtPassportMiddleware, (request, response) => {
     const noteUpdate = {
         title: request.body.title,
         content: request.body.content
@@ -97,7 +98,7 @@ noteRouter.put('/:noteid', (request, response) => {
 });
 
 // REMOVE NOTE BY ID
-noteRouter.delete('/:noteid', (request, response) => {
+noteRouter.delete('/:noteid', jwtPassportMiddleware, (request, response) => {
     // Step 1: Attempt to find the note by ID and delete it using Mongoose.Model.findByIdAndDelete()
     // https://mongoosejs.com/docs/api.html#model_Model.findByIdAndDelete
     Note.findByIdAndDelete(request.params.noteid)

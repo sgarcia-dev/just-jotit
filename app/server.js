@@ -1,22 +1,33 @@
+// To learn more about the ExpressJS NPM module, see official docs
 // https://expressjs.com/
 const express = require('express');
+// To learn more about the morgan NPM module, see official NPM docs
 // https://www.npmjs.com/package/morgan 
 const morgan = require('morgan');
+// To learn more about the Mongoose NPM module, see official docs
 // https://mongoosejs.com/docs/guide.html
 const mongoose = require('mongoose');
+// To learn more about the Passport NPM module, see official docs
+// http://www.passportjs.org/docs/
+const passport = require('passport');
 
 const { PORT, HTTP_STATUS_CODES, MONGO_URL } = require('./config');
+const { authRouter } = require('./auth/auth.router');
 const { userRouter } = require('./user/user.router');
 const { noteRouter } = require('./note/note.router');
+const { localStrategy, jwtStrategy } = require('./auth/auth.strategy');
 
 let server;
 const app = express(); // Initialize express server
+passport.use(localStrategy); // Configure Passport to use our localStrategy when receiving Username + Password combinations
+passport.use(jwtStrategy); // Configure Passport to use our jwtStrategy when receving JSON Web Tokens
 
 // MIDDLEWARE
 app.use(morgan('combined')); // Allows morgan to intercept and log all HTTP requests to the console
 app.use(express.json()); // Required so AJAX request JSON data payload can be parsed and saved into request.body
 app.use(express.static('./public')); // Intercepts all HTTP requests that match files inside /public
 // ROUTER SETUP
+app.use('/api/auth', authRouter); // Redirects all calls to /api/user to userRouter.
 app.use('/api/user', userRouter); // Redirects all calls to /api/user to userRouter.
 app.use('/api/note', noteRouter); // Redirects all calls to /api/note to noteRouter.
 
