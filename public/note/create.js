@@ -13,16 +13,23 @@ function onCreateSubmit(event) {
         title: $('#title-txt').val(),
         content: $('#content-txt').val()
     };
-    
-    // see public/utils.js
-    ajax({
-        method: 'POST',
+
+    $.ajax({
+        type: 'POST',
         url: '/api/note',
-        data: newNote,
-        jwtToken: jwtToken,
-        callback: note => {
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(newNote),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', `Bearer ${jwtToken}`);
+        },
+        success: note => {
             alert('Note created succesfully, redirecting ...');
             window.open(`/note/details.html?id=${note.id}`, '_self');
+        },
+        error: err => {
+            alert('Internal Server Error (see console)');
+            console.error(err);
         }
     });
 }

@@ -1,6 +1,10 @@
-$(document).ready(onReady);
+const RENDER = window.RENDER_MODULE;
+const HTTP = window.HTTP_MODULE;
+const CACHE = window.CACHE_MODULE;
 
-function onReady() {
+$(document).ready(onPageLoad);
+
+function onPageLoad() {
     $('#sign-up-form').submit(onSignUpSubmit);
     $('#login-form').submit(onLoginSubmit);
 }
@@ -14,12 +18,10 @@ function onSignUpSubmit(event) {
         username: $('#username-txt').val(),
         password: $('#password-txt').val()
     };
-    
-    ajax({
-        method: 'POST',
-        url: '/api/user',
-        data: userData,
-        callback: user => {
+
+    HTTP.signupUser({
+        userData,
+        onSuccess: user => {
             alert(`User "${user.username}" created, you may now log in.`);
             window.open('/login.html', '_self');
         }
@@ -33,17 +35,13 @@ function onLoginSubmit(event) {
         username: $('#username-txt').val(),
         password: $('#password-txt').val()
     };
-    
-    ajax({
-        method: 'POST',
-        url: '/api/auth/login',
-        data: userData,
-        callback: response => {
-            localStorage.setItem('jwtToken', response.jwtToken);
-            localStorage.setItem('userid', response.user.id);
-            localStorage.setItem('username', response.user.username);
-            localStorage.setItem('name', response.user.name);
-            localStorage.setItem('email', response.user.email);
+
+    HTTP.loginUser({
+        userData,
+        onSuccess: response => {
+            const authenticatedUser = response.user;
+            authenticatedUser.jwtToken = response.jwtToken;
+            CACHE.saveAuthenticatedUserIntoCache(authenticatedUser);
             alert('Login succesful, redirecting you to homepage ...');
             window.open('/', '_self');
         }

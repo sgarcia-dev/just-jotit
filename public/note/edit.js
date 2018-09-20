@@ -9,7 +9,6 @@ function onReady() {
 }
 
 function getNoteDetails(notes) {
-    // see public/utils.js
     noteId = getQueryStringParam('id');
     const noteToRender = notes.find(note => note.id == noteId);
     if (noteToRender.author === username) {
@@ -34,18 +33,25 @@ function onEditSubmit(event) {
         title: $('#title-txt').val(),
         content: $('#content-txt').val()
     };
-    
-    // see public/utils.js
-    ajax({
-        method: 'PUT',
+
+    $.ajax({
+        type: 'PUT',
         url: `/api/note/${noteId}`,
-        data: newNote,
-        jwtToken: jwtToken,
-        callback: note => {
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(newNote),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', `Bearer ${jwtToken}`);
+        },
+        success: note => {
             alert('Note changes saved succesfully, redirecting ...');
             window.open(`/note/details.html?id=${noteId}`, '_self');
+        },
+        error: err => {
+            alert('Internal Server Error (see console)');
+            console.error(err);
         }
-    });
+    });    
 }
 
 function checkAuthentication() {
@@ -56,4 +62,22 @@ function checkAuthentication() {
         alert('You are not logged in, taking you back to home page.');
         window.open('/', '_self');
     }
+}
+
+/**
+ * Returns the value of a query string parameter. Credit:
+ * https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+ * @param {string} name
+ * @returns {string} value
+ * @example HTTP GET note/details.html?id=5b7b885bcaa2973d30aa2377
+ * const id = getQueryStringParam('id'); // Returns 5b7b885bcaa2973d30aa2377
+ */
+function getQueryStringParam(name) {
+    const url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }

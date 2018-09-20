@@ -1,14 +1,18 @@
-$(document).ready(onReady);
+let STATE = {};
+const RENDER = window.RENDER_MODULE;
+const HTTP = window.HTTP_MODULE;
+const CACHE = window.CACHE_MODULE;
 
-let STATE = {
-    isLoggedIn: false
-};
+$(document).ready(onPageLoad);
 
-function onReady() {
+function onPageLoad() {
     updateAuthenticatedUI();
     
-    if (STATE.isLoggedIn) {
-        fetchUserNotes();
+    if (STATE.authUser) {
+        HTTP.getUserNotes({
+            jwtToken: STATE.authUser.jwtToken,
+            onSuccess: RENDER.renderNotesList
+        });
     } 
     
     $('#logout-btn').on('click', onLogoutBtnClick);
@@ -16,53 +20,11 @@ function onReady() {
     $('#note-list').on('click', '#note-card', onNoteCardClick);
 }
 
-function fetchUserNotes() {
-    $.ajax({
-        type: 'GET',
-        url: '/api/note',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: undefined,
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', `Bearer ${STATE.jwtToken}`);
-        },
-        success: renderNotes,
-        error: err => {
-            alert('Internal Server Error.');
-            console.error(err);
-        }
-    });
-}
-
-function renderNotes(notes) {
-    $('#note-list').html(notes.map(noteToHtml).join('<hr/>'));
-}
-
-function noteToHtml(note) {
-    let deleteButton = '';
-    if (note.user.username === STATE.username) {
-        deleteButton = '<button id="delete-note-btn">Delete</button>';
-    }
-    return `
-    <div id="note-card" data-note-id="${note.id}">
-        <h3 class="card-header">${note.title} ${deleteButton}</h3>
-        <p class="card-content">${note.content.substring(0, 30)}</p>
-        <p class="card-info">
-            <i>${note.user.name} | Last update on ${new Date(note.updateDate).toLocaleDateString()}</i>
-        </p>
-	</div>
-    `;
-}
-
 function onLogoutBtnClick(event) {
     const confirmation = confirm('Are you sure you want to logout?');
     if (confirmation) {
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('userid');
-        localStorage.removeItem('name');
-        localStorage.removeItem('email');
-        localStorage.removeItem('username');
-        window.open('/login.html', '_self');
+        CACHE.deleteAuthenticatedUserFromCache();
+        window.open('/auth/login.html', '_self');
     }
 }
 
@@ -88,37 +50,28 @@ function onDeleteNoteBtnClick(event) {
     const userSaidYes = confirm('Are you sure you want to delete this note?');
     if (userSaidYes) {
         // Step 3: Make ajax call to delete note
-        ajax({
-            method: 'delete',
-            url: `/api/note/${noteId}`,
-            callback: () => {
+        HTTP.deleteNote({
+            noteId: noteId,
+            jwtToken: STATE.authUser.jwtToken,
+            onSuccess: () => {
                 // Step 4: If succesful, reload the notes list
                 alert('Note deleted succesfully, reloading results ...');
-                $.getJSON('api/note', renderNotes);
+                HTTP.getUserNotes({
+                    jwtToken: STATE.authUser.jwtToken,
+                    onSuccess: RENDER.renderNotesList
+                });
             }
         });
     }
 }
 
 function updateAuthenticatedUI() {
-    if (checkUserAuthentication()) {
-        $('#nav-greeting').html(`Welcome, ${STATE.name}`);
+    const authUser = CACHE.getAuthenticatedUserFromCache();
+    if (authUser) {
+        STATE.authUser = authUser;
+        $('#nav-greeting').html(`Welcome, ${authUser.name}`);
         $('#auth-menu').removeAttr('hidden');
     } else {
         $('#default-menu').removeAttr('hidden');
-    }
-}
-
-function checkUserAuthentication() {
-    STATE.jwtToken = localStorage.getItem('jwtToken');
-    if (STATE.jwtToken) {
-        STATE.isLoggedIn = true;
-        STATE.userid = localStorage.getItem('userid');
-        STATE.username = localStorage.getItem('username');
-        STATE.name = localStorage.getItem('name');
-        STATE.email = localStorage.getItem('email');
-        return true;
-    } else {
-        return false;
     }
 }

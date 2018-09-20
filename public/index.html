@@ -13,7 +13,7 @@
     <nav>
         <div id="default-menu" hidden>
             <h3>Welcome to JJ, your own notebook. On the cloud.</h3>
-            <h4>To create a and view your notes, please <a href="/login.html">log in.</a></h4>
+            <h4>To create a and view your notes, please <a href="/auth/login.html">Log In</a></h4>
         </div>
         <div id="auth-menu" hidden>
             <h3 id="nav-greeting">Welcome User</h3>
@@ -28,7 +28,10 @@
         src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
-    <script src="./utils.js"></script>
+
+    <script src="./utilities/cache.js"></script>
+    <script src="./utilities/render.js"></script>
+    <script src="./utilities/http.js"></script>
     <script src="./index.js"></script>
 </body>
 </html>
