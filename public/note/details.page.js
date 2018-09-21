@@ -1,0 +1,24 @@
+let STATE = {};
+const RENDER = window.RENDER_MODULE;
+const HTTP = window.HTTP_MODULE;
+const CACHE = window.CACHE_MODULE;
+const ETC = window.ETC_MODULE;
+
+$(document).ready(onReady);
+
+function onReady() {
+    STATE.noteId = ETC.getQueryStringParam('id');
+    STATE.authUser = CACHE.getAuthenticatedUserFromCache();
+
+    HTTP.getNoteById({
+        noteId: STATE.noteId,
+        onSuccess: RENDER.renderNoteDetails
+    });
+
+    $('#note-details').on('click', '#edit-note-btn', onEditNoteBtnClick);
+}
+
+function onEditNoteBtnClick(event) {
+    event.preventDefault();
+    window.open(`/note/edit.html?id=${STATE.noteId}`, '_self');
+}

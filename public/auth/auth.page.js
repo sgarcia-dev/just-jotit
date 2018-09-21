@@ -27,7 +27,6 @@ function onSignUpSubmit(event) {
         },
         onError: err => {
             alert('There was a problem processing your request, please try again later.');
-            console.error(err);
         }
     });
 }
@@ -51,7 +50,6 @@ function onLoginSubmit(event) {
         },
         onError: err => {
             alert('Incorrect username or password. Please try again.');
-            console.error(err);
         }
     });
 }
