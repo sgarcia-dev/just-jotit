@@ -36,7 +36,6 @@ describe('Integration tests for: /', function () {
                 expect(res).to.be.html;
                 // Chai.string assertion docs: http://www.chaijs.com/api/bdd/#stringstr-msg
                 expect(res.text).to.have.string('<!DOCTYPE html>');
-                expect(res.text).to.have.string('<title>Just Jotit</title>');
             });
     });
 });

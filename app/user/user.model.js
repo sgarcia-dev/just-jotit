@@ -46,7 +46,7 @@ const UserJoiSchema = Joi.object().keys({
     // https://github.com/hapijs/joi/blob/v13.6.0/API.md#string---inherits-from-any
     name: Joi.string().min(1).trim().required(),
     username: Joi.string().alphanum().min(4).max(30).trim().required(),
-    password: Joi.string().alphanum().min(8).max(30).trim().required(),
+    password: Joi.string().min(8).max(30).trim().required(),
     email: Joi.string().email().trim().required()
 });
 

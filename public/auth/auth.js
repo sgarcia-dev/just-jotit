@@ -24,6 +24,10 @@ function onSignUpSubmit(event) {
         onSuccess: user => {
             alert(`User "${user.username}" created, you may now log in.`);
             window.open('/login.html', '_self');
+        },
+        onError: err => {
+            alert('There was a problem processing your request, please try again later.');
+            console.error(err);
         }
     });
 }
@@ -44,6 +48,10 @@ function onLoginSubmit(event) {
             CACHE.saveAuthenticatedUserIntoCache(authenticatedUser);
             alert('Login succesful, redirecting you to homepage ...');
             window.open('/', '_self');
+        },
+        onError: err => {
+            alert('Incorrect username or password. Please try again.');
+            console.error(err);
         }
     });
 }
