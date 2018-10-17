@@ -52,7 +52,10 @@ userRouter.post('/', (request, response) => {
             })
             .catch(error => {
                 // Step 5B: if an error ocurred, respond with an error
-                return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
+                console.error(error);
+                return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+                    error: error.message
+                });
             });
     });
 });
