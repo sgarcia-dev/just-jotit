@@ -15,14 +15,13 @@ function onReady() {
         noteId: STATE.noteId,
         onSuccess: RENDER.renderEditableNote
     });
-    
+
     $('#note-edit-form').on('submit', onEditSubmit);
 }
 
 function onEditSubmit(event) {
     event.preventDefault();
-    const newNote ={
-        author: $('#author-txt').val(),
+    const newNote = {
         title: $('#title-txt').val(),
         content: $('#content-txt').val()
     };
