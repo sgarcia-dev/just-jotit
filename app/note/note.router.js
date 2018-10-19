@@ -91,7 +91,7 @@ noteRouter.get('/:noteid', (request, response) => {
         });
 });
 
-// REMOVE NOTE BY ID
+// UPDATE NOTE BY ID
 noteRouter.put('/:noteid', jwtPassportMiddleware, (request, response) => {
     const noteUpdate = {
         title: request.body.title,

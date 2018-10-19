@@ -179,9 +179,8 @@ describe('Integration tests for: /api/note', function () {
             });
     });
 
-    it('Should update a specific note', function () {
+    it('Should delete a specific note', function () {
         let noteToDelete;
-        const newNoteData = createFakerNote();
         return Note.find()
             .then(notes => {
                 expect(notes).to.be.a('array');
@@ -190,8 +189,7 @@ describe('Integration tests for: /api/note', function () {
 
                 return chai.request(app)
                     .delete(`/api/note/${noteToDelete.id}`)
-                    .set('Authorization', `Bearer ${jwtToken}`)
-                    .send(newNoteData);
+                    .set('Authorization', `Bearer ${jwtToken}`);
             })
             .then(res => {
                 expect(res).to.have.status(HTTP_STATUS_CODES.NO_CONTENT);
