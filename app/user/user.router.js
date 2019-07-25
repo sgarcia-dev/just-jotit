@@ -3,7 +3,7 @@ const express = require('express');
 // https://www.npmjs.com/package/joi
 const Joi = require('joi');
 
-const { HTTP_STATUS_CODES } = require('../config.js');
+const { HTTP_STATUS_CODES } = require('../constants.js');
 const { User, UserJoiSchema } = require('./user.model.js');
 
 const userRouter = express.Router();

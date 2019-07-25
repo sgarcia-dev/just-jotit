@@ -3,7 +3,7 @@ const express = require('express');
 const Joi = require('joi');
 const noteRouter = express.Router();
 
-const { HTTP_STATUS_CODES } = require('../config.js');
+const { HTTP_STATUS_CODES } = require('../constants.js');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
 const { Note, NoteJoiSchema } = require('./note.model.js');
 
