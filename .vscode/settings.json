@@ -1,5 +1,6 @@
 {
     "eslint.autoFixOnSave": true,
     "files.eol": "\n",
-    "javascript.implicitProjectConfig.checkJs": false
+    "javascript.implicitProjectConfig.checkJs": false,
+    "eslint.enable": true
 }
